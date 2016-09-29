@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.santhosh.codepath.todo.DetailsActivity">
+
+    <LinearLayout style="@style/ViewStyle">
+
+        <TextView
+            android:id="@+id/detail_title_label"
+            style="@style/DetailLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/title_label" />
+
+        <TextView
+            android:id="@+id/detail_title"
+            style="@style/DetailValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <View style="@style/Divider" />
+
+    <LinearLayout style="@style/ViewStyle">
+
+        <TextView
+            android:id="@+id/detail_date_label"
+            style="@style/DetailLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/date_label" />
+
+        <TextView
+            android:id="@+id/detail_date"
+            style="@style/DetailValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <View style="@style/Divider" />
+
+    <LinearLayout style="@style/ViewStyle">
+
+        <TextView
+            android:id="@+id/detail_notes_label"
+            style="@style/DetailLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/notes_label" />
+
+        <TextView
+            android:id="@+id/detail_notes"
+            style="@style/DetailValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <View style="@style/Divider" />
+
+    <LinearLayout style="@style/ViewStyle">
+
+        <TextView
+            android:id="@+id/detail_priority_label"
+            style="@style/DetailLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/priority_label" />
+
+        <TextView
+            android:id="@+id/detail_priority"
+            style="@style/DetailValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <View style="@style/Divider" />
+
+    <LinearLayout style="@style/ViewStyle">
+
+        <TextView
+            android:id="@+id/detail_status_label"
+            style="@style/DetailLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/status_label" />
+
+        <TextView
+            android:id="@+id/detail_status"
+            style="@style/DetailValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="priorites">
+        <item>@string/low</item>
+        <item>@string/medium</item>
+        <item>@string/high</item>
+    </string-array>
+
+    <string-array name="status">
+        <item>@string/todo</item>
+        <item>@string/done</item>
+    </string-array>
+</resources>

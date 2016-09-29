@@ -1,0 +1,23 @@
+<resources xmlns:xliff="http://schemas.android.com/tools">
+    <string name="app_name">Simple ToDo</string>
+    <string name="no_items_add_new">You do not have any item ToDo! Add a new one.</string>
+    <string name="title_label">Task Name</string>
+    <string name="date_label">Due Date</string>
+    <string name="notes_label">Task Notes</string>
+    <string name="priority_label">Priority</string>
+    <string name="status_label">Status</string>
+    <string name="add_task">Add Task</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="done">Done</string>
+    <string name="todo">To-Do</string>
+    <string name="cannot_insert_with_null_title">Please add a Task Name.</string>
+    <string name="enter_task_name">Enter name of task.</string>
+    <string name="enter_notes">Enter any notes.</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="add_new_task">Add Task</string>
+    <string name="details_view">Task Details</string>
+    <string name="todo_list">ToDo List</string>
+    <string name="due">Due: <xliff:g example="10/10/2016" id="date">%1$s</xliff:g></string>
+</resources>
