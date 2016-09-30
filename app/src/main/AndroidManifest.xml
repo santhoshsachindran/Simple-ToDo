@@ -23,7 +23,7 @@
             android:exported="false" />
 
         <activity android:name=".DetailsActivity" />
-        <activity android:name=".EditActivity"></activity>
+        <activity android:name=".EditActivity" />
     </application>
 
 </manifest>

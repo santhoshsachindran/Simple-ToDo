@@ -7,7 +7,9 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,12 +57,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
 
         getLoaderManager().initLoader(0, null, this);
-
     }
 
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d("Test", "onCreateLoader");
         return new CursorLoader(this,
                 ToDoContract.ListEntry.CONTENT_URI, TODO_ITEM_COLUMNS, null, null, null);
     }
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mTodoAdapter.changeCursor(data);
             mEmptyView.setVisibility(View.GONE);
         } else {
+            mTodoAdapter.changeCursor(null);
             mEmptyView.setVisibility(View.VISIBLE);
             mEmptyView.setText(getString(R.string.no_items_add_new));
         }
@@ -88,17 +91,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    protected void onResume() {
-        getLoaderManager().restartLoader(0, null, this);
-        super.onResume();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_task:
-                Intent intent = new Intent(this, EditActivity.class);
-                startActivity(intent);
+                FragmentManager fm = getSupportFragmentManager();
+                AddItemFragment addItemFragment = AddItemFragment.newInstance(getString(R.string.add_new_task));
+                addItemFragment.show(fm, "fragment_add_new");
                 return true;
         }
 

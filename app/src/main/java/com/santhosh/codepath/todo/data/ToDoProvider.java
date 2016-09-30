@@ -33,7 +33,7 @@ public class ToDoProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         final SQLiteDatabase db = mToDoDbHelper.getReadableDatabase();
-        Cursor cursor = null;
+        Cursor cursor;
 
         switch (sUriMatcher.match(uri)) {
             case ToDoContract.ListEntry.CONTENT_GENERIC:
@@ -74,7 +74,7 @@ public class ToDoProvider extends ContentProvider {
         final SQLiteDatabase db = mToDoDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
-        Uri returnUri = null;
+        Uri returnUri;
 
         switch (match) {
             case ToDoContract.ListEntry.CONTENT_GENERIC:
@@ -82,7 +82,7 @@ public class ToDoProvider extends ContentProvider {
                 if (rowId > 0) {
                     returnUri = ContentUris.withAppendedId(uri, rowId);
                 } else {
-                    throw new android.database.SQLException("Failed to insert rown into " + uri);
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
             default:
@@ -98,7 +98,7 @@ public class ToDoProvider extends ContentProvider {
         final SQLiteDatabase db = mToDoDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
-        int rowsDeleted = 0;
+        int rowsDeleted;
 
         switch (match) {
             case ToDoContract.ListEntry.CONTENT_GENERIC:
@@ -122,7 +122,7 @@ public class ToDoProvider extends ContentProvider {
         final SQLiteDatabase db = mToDoDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
-        int rowsUpdated = 0;
+        int rowsUpdated;
 
         switch (match) {
             case ToDoContract.ListEntry.CONTENT_GENERIC:

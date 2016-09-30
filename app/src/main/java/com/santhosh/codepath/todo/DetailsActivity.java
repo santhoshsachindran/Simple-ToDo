@@ -82,7 +82,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     private void deleteItem() {
         String selection = ToDoContract.ListEntry._ID + " =?";
-        String[] selectionArgs = new String[] {String.valueOf(ContentUris.parseId(mUri))};
+        String[] selectionArgs = new String[]{String.valueOf(ContentUris.parseId(mUri))};
         getContentResolver().delete(ToDoContract.ListEntry.CONTENT_URI, selection, selectionArgs);
     }
 
