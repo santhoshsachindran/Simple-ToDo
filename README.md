@@ -15,7 +15,8 @@ Completed user stories:
 * [x]Required: User can delete a todo item.
 * [x]Required: Todo item is persistent and data is available on device or app reboot.
 * [x]Optional: Persisted Todo items into SQLite like SQLiteOpenHelper
-* [x]Optional: Implemented a Content Provider to handle Database operations
+* [x]Optional: Implemented a ContentProvider to handle Database operations
+* [x]Optional: Use CursorLoader and CursorAdapter to efficiently user DB and ContentProvider
 * [x]Optional: Added support for adding due dates
 * [x]Optional: Display due dates in the listview for user to see.
 * [x]Optional: Let user select priority for each item and display in listView.
