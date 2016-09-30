@@ -31,7 +31,8 @@ public class ToDoCursorAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         viewHolder.taskTitle.setText(cursor.getString(cursor.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_TITLE)));
-        viewHolder.taskDate.setText(cursor.getString(cursor.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_DATE)));
+        viewHolder.taskDate.setText(context.getString(R.string.due, cursor.getString(cursor.
+                getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_DATE))));
 
         String priority = cursor.getString(cursor.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_PRIORITY));
         viewHolder.taskPriority.setText(priority);

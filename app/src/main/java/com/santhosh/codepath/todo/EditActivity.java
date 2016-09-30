@@ -31,8 +31,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private Uri mUri;
 
-    private boolean mHasExtra = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,15 +42,10 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         mPriority = (Spinner) findViewById(R.id.pri_input);
         mStatus = (Spinner) findViewById(R.id.status_input);
 
-        if (getIntent().hasExtra("URI")) {
-            mHasExtra = true;
-            setTitle(getString(R.string.edit_task));
-            mUri = Uri.parse(getIntent().getStringExtra("URI"));
+        setTitle(getString(R.string.edit_task));
+        mUri = Uri.parse(getIntent().getStringExtra("URI"));
 
-            getLoaderManager().initLoader(0, null, this);
-        } else {
-            setTitle(getString(R.string.add_new_task));
-        }
+        getLoaderManager().initLoader(0, null, this);
     }
 
     private int getDate(String setDate) {
@@ -60,7 +53,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private int getMonth(String setDate) {
-        return Integer.parseInt(setDate.split("/")[1]);
+        return Integer.parseInt(setDate.split("/")[1]) - 1;
     }
 
     private int getYear(String setDate) {
@@ -77,11 +70,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_task:
-                if (mHasExtra) {
-                    updateEntry();
-                } else {
-                    saveEntry();
-                }
+                updateEntry();
                 return true;
             case R.id.discard_task:
                 finish();
@@ -95,30 +84,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             return;
         }
 
-        ContentValues contentValues = getContentValues();
-        String selection = ToDoContract.ListEntry._ID + " =?";
-        String[] selectionArgs = new String[]{String.valueOf(ContentUris.parseId(mUri))};
-
-        getContentResolver().update(ToDoContract.ListEntry.CONTENT_URI, contentValues, selection, selectionArgs);
-
-        Intent intent = new Intent();
-        intent.putExtra("URI", mUri.toString());
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-    private void saveEntry() {
-        if (isTitleEmpty()) {
-            return;
-        }
-
-        ContentValues contentValues = getContentValues();
-
-        getContentResolver().insert(ToDoContract.ListEntry.CONTENT_URI, contentValues);
-        finish();
-    }
-
-    private ContentValues getContentValues() {
         String title = mTitle.getText().toString();
         String date = String.valueOf(mDate.getDayOfMonth()) + "/" + String.valueOf(mDate.getMonth() + 1)
                 + "/" + String.valueOf(mDate.getYear());
@@ -134,7 +99,15 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         contentValues.put(ToDoContract.ListEntry.COLUMN_LIST_PRIORITY, pri);
         contentValues.put(ToDoContract.ListEntry.COLUMN_LIST_STATUS, status);
 
-        return contentValues;
+        String selection = ToDoContract.ListEntry._ID + " =?";
+        String[] selectionArgs = new String[]{String.valueOf(ContentUris.parseId(mUri))};
+
+        getContentResolver().update(ToDoContract.ListEntry.CONTENT_URI, contentValues, selection, selectionArgs);
+
+        Intent intent = new Intent();
+        intent.putExtra("URI", mUri.toString());
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private boolean isTitleEmpty() {

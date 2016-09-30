@@ -22,6 +22,7 @@ Completed user stories:
 * [x]Optional: Let user select priority for each item and display in listView.
 * [x]Optional: Empty ToDo title will not be stored to the db.
 * [x]Optional: Show empty view on list view when there are no items in the todo list, and show message to add new item.
+* [x]Optional: Add task changed to a DialogFragment.
 
 ## Video Walkthrough 
 
