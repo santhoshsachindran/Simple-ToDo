@@ -48,6 +48,8 @@ public class ToDoProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
@@ -87,6 +89,7 @@ public class ToDoProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
+        getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
 
@@ -101,10 +104,16 @@ public class ToDoProvider extends ContentProvider {
             case ToDoContract.ListEntry.CONTENT_GENERIC:
                 rowsDeleted = db.delete(ToDoContract.ListEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+            case ToDoContract.ListEntry.CONTENT_ID:
+                selection = ToDoContract.ListEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = db.delete(ToDoContract.ListEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
+        getContext().getContentResolver().notifyChange(uri, null);
         return rowsDeleted;
     }
 
@@ -119,10 +128,16 @@ public class ToDoProvider extends ContentProvider {
             case ToDoContract.ListEntry.CONTENT_GENERIC:
                 rowsUpdated = db.update(ToDoContract.ListEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
+            case ToDoContract.ListEntry.CONTENT_ID:
+                selection = ToDoContract.ListEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsUpdated = db.update(ToDoContract.ListEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
+        getContext().getContentResolver().notifyChange(uri, null);
         return rowsUpdated;
     }
 }

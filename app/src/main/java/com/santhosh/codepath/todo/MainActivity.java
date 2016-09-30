@@ -1,11 +1,11 @@
 package com.santhosh.codepath.todo;
 
 import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
-import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -17,13 +17,16 @@ import android.widget.TextView;
 
 import com.santhosh.codepath.todo.data.ToDoContract;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<TodoItem>> {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String[] TODO_ITEM_COLUMNS = {
+            ToDoContract.ListEntry._ID,
+            ToDoContract.ListEntry.COLUMN_LIST_TITLE,
+            ToDoContract.ListEntry.COLUMN_LIST_DATE,
+            ToDoContract.ListEntry.COLUMN_LIST_PRIORITY
+    };
     private ListView mListView;
     private TextView mEmptyView;
-    private TodoAdapter mTodoAdapter;
+    private ToDoCursorAdapter mTodoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +37,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mListView = (ListView) findViewById(R.id.todo_list);
         mEmptyView = (TextView) findViewById(R.id.empty_view);
-        mTodoAdapter = new TodoAdapter(this, new ArrayList<TodoItem>());
+        mTodoAdapter = new ToDoCursorAdapter(this, null, 0);
 
         mListView.setAdapter(mTodoAdapter);
         mListView.setEmptyView(mEmptyView);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TodoItem todoItem = (TodoItem) parent.getItemAtPosition(position);
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+
                 Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
-                intent.putExtra("PARCELABLE", todoItem);
+                Uri uri = Uri.withAppendedPath(ToDoContract.ListEntry.CONTENT_URI, String.valueOf(
+                        cursor.getInt(cursor.getColumnIndex(ToDoContract.ListEntry._ID))));
+                intent.putExtra("URI", uri.toString());
                 startActivity(intent);
             }
         });
@@ -54,15 +60,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
     @Override
-    public Loader<List<TodoItem>> onCreateLoader(int id, Bundle args) {
-        return new FetchTodoItems(this);
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(this,
+                ToDoContract.ListEntry.CONTENT_URI, TODO_ITEM_COLUMNS, null, null, null);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<TodoItem>> loader, List<TodoItem> data) {
-        mTodoAdapter.clear();
-        if (data != null && !data.isEmpty()) {
-            mTodoAdapter.addAll(data);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data != null && data.moveToFirst()) {
+            mTodoAdapter.changeCursor(data);
             mEmptyView.setVisibility(View.GONE);
         } else {
             mEmptyView.setVisibility(View.VISIBLE);
@@ -71,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoaderReset(Loader<List<TodoItem>> loader) {
-        mTodoAdapter.clear();
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mTodoAdapter.changeCursor(null);
     }
 
     @Override
@@ -97,43 +103,5 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private static class FetchTodoItems extends AsyncTaskLoader<List<TodoItem>> {
-        private Context fetchContext;
-
-        public FetchTodoItems(Context context) {
-            super(context);
-            fetchContext = context;
-        }
-
-        @Override
-        protected void onStartLoading() {
-            forceLoad();
-        }
-
-        @Override
-        public List<TodoItem> loadInBackground() {
-            List<TodoItem> items = new ArrayList<>();
-
-            Cursor cursor = fetchContext.getContentResolver().query(ToDoContract.ListEntry.CONTENT_URI,
-                    null, null, null, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    String title = cursor.getString(cursor.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_TITLE));
-                    String date = cursor.getString(cursor.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_DATE));
-                    String note = cursor.getString(cursor.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_NOTE));
-                    String priority = cursor.getString(cursor.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_PRIORITY));
-                    String status = cursor.getString(cursor.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_STATUS));
-
-                    items.add(new TodoItem(title, date, note, priority, status));
-                } while (cursor.moveToNext());
-            }
-
-            cursor.close();
-
-            return items;
-        }
     }
 }

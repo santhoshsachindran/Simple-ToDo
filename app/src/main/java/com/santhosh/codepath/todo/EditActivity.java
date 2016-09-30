@@ -1,7 +1,13 @@
 package com.santhosh.codepath.todo;
 
+import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -14,14 +20,16 @@ import android.widget.Toast;
 
 import com.santhosh.codepath.todo.data.ToDoContract;
 
-public class EditActivity extends AppCompatActivity {
+import static com.santhosh.codepath.todo.DetailsActivity.TODO_DETAIL_COLUMNS;
+
+public class EditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private EditText mTitle;
     private DatePicker mDate;
     private EditText mNotes;
     private Spinner mPriority;
     private Spinner mStatus;
 
-    private TodoItem mTodoItem;
+    private Uri mUri;
 
     private boolean mHasExtra = false;
 
@@ -36,16 +44,12 @@ public class EditActivity extends AppCompatActivity {
         mPriority = (Spinner) findViewById(R.id.pri_input);
         mStatus = (Spinner) findViewById(R.id.status_input);
 
-        if (getIntent().hasExtra("PARCELABLE")) {
-            setTitle(getString(R.string.edit_task));
+        if (getIntent().hasExtra("URI")) {
             mHasExtra = true;
-            mTodoItem = getIntent().getParcelableExtra("PARCELABLE");
-            mTitle.setText(mTodoItem.getTaskName());
-            mNotes.setText(mTodoItem.getTaskNote());
-            mPriority.setSelection(((ArrayAdapter) mPriority.getAdapter()).getPosition(mTodoItem.getPriority()));
-            mStatus.setSelection(((ArrayAdapter) mStatus.getAdapter()).getPosition(mTodoItem.getStatus()));
-            String setDate = mTodoItem.getDueDate();
-            mDate.updateDate(getYear(setDate), getMonth(setDate), getDate(setDate));
+            setTitle(getString(R.string.edit_task));
+            mUri = Uri.parse(getIntent().getStringExtra("URI"));
+
+            getLoaderManager().initLoader(0, null, this);
         } else {
             setTitle(getString(R.string.add_new_task));
         }
@@ -92,23 +96,13 @@ public class EditActivity extends AppCompatActivity {
         }
 
         ContentValues contentValues = getContentValues();
-        String selection = ToDoContract.ListEntry.COLUMN_LIST_TITLE + " =? AND "
-                + ToDoContract.ListEntry.COLUMN_LIST_DATE + " =? AND "
-                + ToDoContract.ListEntry.COLUMN_LIST_NOTE + " =? AND "
-                + ToDoContract.ListEntry.COLUMN_LIST_PRIORITY + " =? AND "
-                + ToDoContract.ListEntry.COLUMN_LIST_STATUS + " =?";
-        String[] selectionArgs = new String[]{mTodoItem.getTaskName(), mTodoItem.getDueDate(),
-                mTodoItem.getTaskNote(), mTodoItem.getPriority(), mTodoItem.getStatus()};
+        String selection = ToDoContract.ListEntry._ID + " =?";
+        String[] selectionArgs = new String[]{String.valueOf(ContentUris.parseId(mUri))};
 
         getContentResolver().update(ToDoContract.ListEntry.CONTENT_URI, contentValues, selection, selectionArgs);
 
         Intent intent = new Intent();
-        intent.putExtra("PARCELABLE", new TodoItem(mTitle.getText().toString(),
-                String.valueOf(mDate.getDayOfMonth()) + "/" + String.valueOf(mDate.getMonth() + 1)
-                        + "/" + String.valueOf(mDate.getYear()),
-                mNotes.getText().toString(),
-                (String) mPriority.getSelectedItem(),
-                (String) mStatus.getSelectedItem()));
+        intent.putExtra("URI", mUri.toString());
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -150,5 +144,33 @@ public class EditActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (mUri != null) {
+            return new CursorLoader(this, mUri, TODO_DETAIL_COLUMNS, null, null, null);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data != null && data.moveToFirst()) {
+            mTitle.setText(data.getString(data.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_TITLE)));
+            String date = data.getString(data.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_DATE));
+            mDate.updateDate(getYear(date), getMonth(date), getDate(date));
+            mNotes.setText(data.getString(data.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_NOTE)));
+            mPriority.setSelection(((ArrayAdapter) mPriority.getAdapter()).getPosition(data.
+                    getString(data.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_PRIORITY))));
+            mStatus.setSelection(((ArrayAdapter) mPriority.getAdapter()).getPosition(data.
+                    getString(data.getColumnIndex(ToDoContract.ListEntry.COLUMN_LIST_STATUS))));
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
